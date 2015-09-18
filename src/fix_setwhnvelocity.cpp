@@ -36,7 +36,7 @@ enum{NONE,CONSTANT,EQUAL,ATOM};
 FixSetWHNVelocity::FixSetWHNVelocity(LAMMPS *lmp, int narg, char **arg) :
   Fix(lmp, narg, arg)
 {
-  if (narg < 6) error->all(FLERR,"Illegal fix set WHN velocity command");
+  if (narg < 6) error->all(FLERR,"Illegal fix setwhnvelocity command");
 
   dynamic_group_allow = 1;
   vector_flag = 1;
@@ -81,29 +81,29 @@ FixSetWHNVelocity::FixSetWHNVelocity(LAMMPS *lmp, int narg, char **arg) :
 
   // optional args
   // remove them --sty
-  /*
+
   iregion = -1;
   idregion = NULL;
-
+  
   int iarg = 6;
   while (iarg < narg) {
     if (strcmp(arg[iarg],"region") == 0) {
-      if (iarg+2 > narg) error->all(FLERR,"Illegal fix setforce command");
+      if (iarg+2 > narg) error->all(FLERR,"Illegal fix setwhnvelocity command");
       iregion = domain->find_region(arg[iarg+1]);
       if (iregion == -1)
-        error->all(FLERR,"Region ID for fix setforce does not exist");
+        error->all(FLERR,"Region ID for fix setwhnvelocity does not exist");
       int n = strlen(arg[iarg+1]) + 1;
       idregion = new char[n];
       strcpy(idregion,arg[iarg+1]);
       iarg += 2;
-    } else error->all(FLERR,"Illegal fix setforce command");
+    } else error->all(FLERR,"Illegal fix setwhnvelocity command");
   }
-  */
+  
   velocity_flag = 0;
   voriginal[0] = voriginal[1] = voriginal[2] = 0.0;
 
   maxatom = atom->nmax;
-  memory->create(svelocity,maxatom,3,"setforce:sforce");
+  memory->create(svelocity,maxatom,3,"setwhnvelocity:svelocity");
 }
 
 /* ---------------------------------------------------------------------- */
@@ -137,36 +137,36 @@ void FixSetWHNVelocity::init()
   if (xstr) {
     xvar = input->variable->find(xstr);
     if (xvar < 0)
-      error->all(FLERR,"Variable name for fix set whn velocity does not exist");
+      error->all(FLERR,"Variable name for fix setwhnvelocityy does not exist");
     if (input->variable->equalstyle(xvar)) xstyle = EQUAL;
     else if (input->variable->atomstyle(xvar)) xstyle = ATOM;
-    else error->all(FLERR,"Variable for fix set whn velocity is invalid style");
+    else error->all(FLERR,"Variable for fix setwhnvelocity is invalid style");
   }
   if (ystr) {
     yvar = input->variable->find(ystr);
     if (yvar < 0)
-      error->all(FLERR,"Variable name for fix set whn velocity does not exist");
+      error->all(FLERR,"Variable name for fix setwhnvelocity does not exist");
     if (input->variable->equalstyle(yvar)) ystyle = EQUAL;
     else if (input->variable->atomstyle(yvar)) ystyle = ATOM;
-    else error->all(FLERR,"Variable for fix set whn velocity is invalid style");
+    else error->all(FLERR,"Variable for fix setwhnvelocity is invalid style");
   }
   if (zstr) {
     zvar = input->variable->find(zstr);
     if (zvar < 0)
-      error->all(FLERR,"Variable name for fix set whn velocity does not exist");
+      error->all(FLERR,"Variable name for fix setwhnvelocity does not exist");
     if (input->variable->equalstyle(zvar)) zstyle = EQUAL;
     else if (input->variable->atomstyle(zvar)) zstyle = ATOM;
-    else error->all(FLERR,"Variable for fix set whn velocity is invalid style");
+    else error->all(FLERR,"Variable for fix setwhnvelocity is invalid style");
   }
 
   // set index and check validity of region
   // no use --sty
-  /*
+  
   if (iregion >= 0) {
     iregion = domain->find_region(idregion);
     if (iregion == -1)
-      error->all(FLERR,"Region ID for fix set whn velocity does not exist");
-  }*/
+      error->all(FLERR,"Region ID for fix setwhnvelocity does not exist");
+  }
 
   if (xstyle == ATOM || ystyle == ATOM || zstyle == ATOM)
     varflag = ATOM;
@@ -190,7 +190,7 @@ void FixSetWHNVelocity::init()
     if (zstyle == CONSTANT && zvalue != 0.0) flag = 1;
   }
   if (flag)
-    error->all(FLERR,"Cannot use non-zero set whn velocity in an energy minimization");
+    error->all(FLERR,"Cannot use non-zero setwhnvelocity in an energy minimization");
 }
 
 /* ---------------------------------------------------------------------- */
