@@ -160,12 +160,13 @@ void FixSetWHNVelocity::init()
   }
 
   // set index and check validity of region
-
+  // no use --sty
+  /*
   if (iregion >= 0) {
     iregion = domain->find_region(idregion);
     if (iregion == -1)
       error->all(FLERR,"Region ID for fix set whn velocity does not exist");
-  }
+  }*/
 
   if (xstyle == ATOM || ystyle == ATOM || zstyle == ATOM)
     varflag = ATOM;
