@@ -249,9 +249,9 @@ void FixSetWHNVelocity::post_force(int vflag)
         voriginal[0] += f[i][0];
         voriginal[1] += f[i][1];
         voriginal[2] += f[i][2];
-        if (xstyle) v[i][0] = xvalue;
-        if (ystyle) v[i][1] = yvalue;
-        if (zstyle) v[i][2] = zvalue;
+        if (xstyle) v[i][0] += xvalue;
+        if (ystyle) v[i][1] += yvalue;
+        if (zstyle) v[i][2] += zvalue;
       }
 
   // variable force, wrap with clear/add
