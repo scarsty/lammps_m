@@ -1,0 +1,50 @@
+# 3d LJ chain solvent
+
+dimension	3
+boundary	f f f
+units           metal
+atom_style	full
+#neighbor	0.3 bin
+#neigh_modify    every 1 delay 10 check yes page 100000 one 2000
+#special_bonds   harmonic
+
+read_data       data.ccc
+
+pair_style      lj/cut/coul/cut 6.3115
+pair_coeff      * * 0.0 6.3115
+#pair_coeff      1 2 2e-2 1.2314
+pair_coeff      1 3 2e-2 4.8696 
+pair_coeff      1 4 2e-2 3.9760
+pair_coeff      2 3 2e-2 4.8696 
+pair_coeff      2 4 2e-2 3.9760 
+bond_style      harmonic
+bond_coeff      1 5 1.3822
+#angle_style     cosine
+#angle_coeff     1 50.0
+#dihedral_style  harmonic
+#dihedral_coeff  1 0.0 1 1 
+
+# define groups
+
+group           carbon type 1
+group           nitrogen type 2
+group           lead type 3
+group           iodine type 4
+group           lattice union lead iodine
+group           mobile union carbon nitrogen
+# initial velocities
+
+#neigh_modify    exclude group cylinder cylinder
+velocity        all create 300.0 100 dist gaussian
+fix             1 lattice setforce 0.0 0.0 0.0
+fix             2 mobile nvt temp 300 300 1
+fix             3 mobile setwhnvelocity 0.0 0.0 0.0
+
+# Run
+
+timestep	1e-4
+thermo		200
+
+dump		1 all custom 500 dump.ccc.lammpstrj id type x y z vx vy vz 
+
+run		100000
