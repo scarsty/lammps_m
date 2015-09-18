@@ -59,4 +59,5 @@ double **x,**v,**f;
   
 [fix setwhnvelocity]
 从fix setforce经过修改而来。
+代码待处理。
 

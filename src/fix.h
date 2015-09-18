@@ -15,9 +15,11 @@
 #define LMP_FIX_H
 
 #include "pointers.h"
-#include <io.h>
 
+#ifdef _MSC_VER
+#include <io.h>
 #define ftruncate _chsize
+#endif
 
 namespace LAMMPS_NS {
 
