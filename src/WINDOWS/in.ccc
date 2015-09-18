@@ -38,7 +38,7 @@ group           mobile union carbon nitrogen
 velocity        all create 300.0 100 dist gaussian
 fix             1 lattice setforce 0.0 0.0 0.0
 fix             2 mobile nvt temp 300 300 1
-fix             3 mobile setwhnvelocity 1.0e-1 2.0e-1 3.0e-1
+fix             3 mobile setwhnvelocity 0.0e-1 0.0e-1 0.0e-1
 
 # Run
 
