@@ -46,6 +46,8 @@ FixSetWHNVelocity::FixSetWHNVelocity(LAMMPS *lmp, int narg, char **arg) :
 
   xstr = ystr = zstr = NULL;
 
+  // the following 3 float number --sty
+
   if (strstr(arg[3],"v_") == arg[3]) {
     int n = strlen(&arg[3][2]) + 1;
     xstr = new char[n];
@@ -78,7 +80,8 @@ FixSetWHNVelocity::FixSetWHNVelocity(LAMMPS *lmp, int narg, char **arg) :
   }
 
   // optional args
-
+  // remove them --sty
+  /*
   iregion = -1;
   idregion = NULL;
 
@@ -95,12 +98,12 @@ FixSetWHNVelocity::FixSetWHNVelocity(LAMMPS *lmp, int narg, char **arg) :
       iarg += 2;
     } else error->all(FLERR,"Illegal fix setforce command");
   }
-
-  force_flag = 0;
-  foriginal[0] = foriginal[1] = foriginal[2] = 0.0;
+  */
+  velocity_flag = 0;
+  voriginal[0] = voriginal[1] = voriginal[2] = 0.0;
 
   maxatom = atom->nmax;
-  memory->create(sforce,maxatom,3,"setforce:sforce");
+  memory->create(svelocity,maxatom,3,"setforce:sforce");
 }
 
 /* ---------------------------------------------------------------------- */
@@ -111,7 +114,7 @@ FixSetWHNVelocity::~FixSetWHNVelocity()
   delete [] ystr;
   delete [] zstr;
   delete [] idregion;
-  memory->destroy(sforce);
+  memory->destroy(svelocity);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -134,26 +137,26 @@ void FixSetWHNVelocity::init()
   if (xstr) {
     xvar = input->variable->find(xstr);
     if (xvar < 0)
-      error->all(FLERR,"Variable name for fix setforce does not exist");
+      error->all(FLERR,"Variable name for fix set whn velocity does not exist");
     if (input->variable->equalstyle(xvar)) xstyle = EQUAL;
     else if (input->variable->atomstyle(xvar)) xstyle = ATOM;
-    else error->all(FLERR,"Variable for fix setforce is invalid style");
+    else error->all(FLERR,"Variable for fix set whn velocity is invalid style");
   }
   if (ystr) {
     yvar = input->variable->find(ystr);
     if (yvar < 0)
-      error->all(FLERR,"Variable name for fix setforce does not exist");
+      error->all(FLERR,"Variable name for fix set whn velocity does not exist");
     if (input->variable->equalstyle(yvar)) ystyle = EQUAL;
     else if (input->variable->atomstyle(yvar)) ystyle = ATOM;
-    else error->all(FLERR,"Variable for fix setforce is invalid style");
+    else error->all(FLERR,"Variable for fix set whn velocity is invalid style");
   }
   if (zstr) {
     zvar = input->variable->find(zstr);
     if (zvar < 0)
-      error->all(FLERR,"Variable name for fix setforce does not exist");
+      error->all(FLERR,"Variable name for fix set whn velocity does not exist");
     if (input->variable->equalstyle(zvar)) zstyle = EQUAL;
     else if (input->variable->atomstyle(zvar)) zstyle = ATOM;
-    else error->all(FLERR,"Variable for fix setforce is invalid style");
+    else error->all(FLERR,"Variable for fix set whn velocity is invalid style");
   }
 
   // set index and check validity of region
@@ -161,7 +164,7 @@ void FixSetWHNVelocity::init()
   if (iregion >= 0) {
     iregion = domain->find_region(idregion);
     if (iregion == -1)
-      error->all(FLERR,"Region ID for fix setforce does not exist");
+      error->all(FLERR,"Region ID for fix set whn velocity does not exist");
   }
 
   if (xstyle == ATOM || ystyle == ATOM || zstyle == ATOM)
@@ -186,7 +189,7 @@ void FixSetWHNVelocity::init()
     if (zstyle == CONSTANT && zvalue != 0.0) flag = 1;
   }
   if (flag)
-    error->all(FLERR,"Cannot use non-zero forces in an energy minimization");
+    error->all(FLERR,"Cannot use non-zero set whn velocity in an energy minimization");
 }
 
 /* ---------------------------------------------------------------------- */
@@ -216,6 +219,7 @@ void FixSetWHNVelocity::post_force(int vflag)
 {
   double **x = atom->x;
   double **f = atom->f;
+  double **v = atom->v;
   int *mask = atom->mask;
   int nlocal = atom->nlocal;
 
@@ -231,40 +235,41 @@ void FixSetWHNVelocity::post_force(int vflag)
 
   if (varflag == ATOM && nlocal > maxatom) {
     maxatom = atom->nmax;
-    memory->destroy(sforce);
-    memory->create(sforce,maxatom,3,"setforce:sforce");
+    memory->destroy(svelocity);
+    memory->create(svelocity,maxatom,3,"setwhnvelocity:svelocity");
   }
 
-  foriginal[0] = foriginal[1] = foriginal[2] = 0.0;
-  force_flag = 0;
+  voriginal[0] = voriginal[1] = voriginal[2] = 0.0;
+  velocity_flag = 0;
 
   if (varflag == CONSTANT) {
     for (int i = 0; i < nlocal; i++)
       if (mask[i] & groupbit) {
         if (region && !region->match(x[i][0],x[i][1],x[i][2])) continue;
-        foriginal[0] += f[i][0];
-        foriginal[1] += f[i][1];
-        foriginal[2] += f[i][2];
-        if (xstyle) f[i][0] = xvalue;
-        if (ystyle) f[i][1] = yvalue;
-        if (zstyle) f[i][2] = zvalue;
+        voriginal[0] += f[i][0];
+        voriginal[1] += f[i][1];
+        voriginal[2] += f[i][2];
+        if (xstyle) v[i][0] = xvalue;
+        if (ystyle) v[i][1] = yvalue;
+        if (zstyle) v[i][2] = zvalue;
       }
 
   // variable force, wrap with clear/add
 
   } else {
-
+	  // seems of no use here --sty
+	/*
     modify->clearstep_compute();
 
     if (xstyle == EQUAL) xvalue = input->variable->compute_equal(xvar);
     else if (xstyle == ATOM)
-      input->variable->compute_atom(xvar,igroup,&sforce[0][0],3,0);
+      input->variable->compute_atom(xvar,igroup,&svelocity[0][0],3,0);
     if (ystyle == EQUAL) yvalue = input->variable->compute_equal(yvar);
     else if (ystyle == ATOM)
-      input->variable->compute_atom(yvar,igroup,&sforce[0][1],3,0);
+      input->variable->compute_atom(yvar,igroup,&svelocity[0][1],3,0);
     if (zstyle == EQUAL) zvalue = input->variable->compute_equal(zvar);
     else if (zstyle == ATOM)
-      input->variable->compute_atom(zvar,igroup,&sforce[0][2],3,0);
+      input->variable->compute_atom(zvar,igroup,&svelocity[0][2],3,0);
 
     modify->addstep_compute(update->ntimestep + 1);
 
@@ -274,13 +279,14 @@ void FixSetWHNVelocity::post_force(int vflag)
         foriginal[0] += f[i][0];
         foriginal[1] += f[i][1];
         foriginal[2] += f[i][2];
-        if (xstyle == ATOM) f[i][0] = sforce[i][0];
+        if (xstyle == ATOM) f[i][0] = svelocity[i][0];
         else if (xstyle) f[i][0] = xvalue;
-        if (ystyle == ATOM) f[i][1] = sforce[i][1];
+        if (ystyle == ATOM) f[i][1] = svelocity[i][1];
         else if (ystyle) f[i][1] = yvalue;
-        if (zstyle == ATOM) f[i][2] = sforce[i][2];
+        if (zstyle == ATOM) f[i][2] = svelocity[i][2];
         else if (zstyle) f[i][2] = zvalue;
       }
+	  */
   }
 }
 
@@ -300,15 +306,16 @@ void FixSetWHNVelocity::post_force_respa(int vflag, int ilevel, int iloop)
 
     double **x = atom->x;
     double **f = atom->f;
+	double **v = atom->v;
     int *mask = atom->mask;
     int nlocal = atom->nlocal;
 
     for (int i = 0; i < nlocal; i++)
       if (mask[i] & groupbit) {
         if (region && !region->match(x[i][0],x[i][1],x[i][2])) continue;
-        if (xstyle) f[i][0] = 0.0;
-        if (ystyle) f[i][1] = 0.0;
-        if (zstyle) f[i][2] = 0.0;
+        if (xstyle) v[i][0] = 0.0;
+        if (ystyle) v[i][1] = 0.0;
+        if (zstyle) v[i][2] = 0.0;
       }
   }
 }
@@ -328,9 +335,9 @@ double FixSetWHNVelocity::compute_vector(int n)
 {
   // only sum across procs one time
 
-  if (force_flag == 0) {
-    MPI_Allreduce(foriginal,foriginal_all,3,MPI_DOUBLE,MPI_SUM,world);
-    force_flag = 1;
+  if (velocity_flag == 0) {
+    MPI_Allreduce(voriginal,foriginal_all,3,MPI_DOUBLE,MPI_SUM,world);
+    velocity_flag = 1;
   }
   return foriginal_all[n];
 }

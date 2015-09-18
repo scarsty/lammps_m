@@ -44,12 +44,12 @@ class FixSetWHNVelocity : public Fix {
   char *xstr,*ystr,*zstr;
   char *idregion;
   int xvar,yvar,zvar,xstyle,ystyle,zstyle;
-  double foriginal[3],foriginal_all[3];
-  int force_flag;
+  double voriginal[3],foriginal_all[3];
+  int velocity_flag;
   int nlevels_respa;
 
   int maxatom;
-  double **sforce;
+  double **svelocity;
 };
 
 }
