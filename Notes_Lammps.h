@@ -32,14 +32,24 @@ erf.h文件中删除erf和erfc。
 //double erf(double x);
 //double erfc(double x);
 
+类似下面的语句添加const
+const unsigned int maxlib = 1024;
+
 删除erf.c文件。
 
 Pointer类下面写了大量其子类的指针，需加上class关键字。
 
 ftruncate全部改成_chsize。
+可以在fix.h中增加：
+#ifdef _MSC_VER
+#include <io.h>
+#define ftruncate _chsize
+#endif
+
 部分int index[p+2]的写法换掉。
-少数头文件定义不全，补上。
+少数文件中有未定义类型，是因为头文件包含不全，补上。
 不存在的头文件包含全部去掉。
+power函数两个参数全部强制成double。
 
 3个基本库是KSPACE，MOLUCULE，MANYBODY。
 
