@@ -60,8 +60,10 @@ power函数两个参数全部强制成double。
 std::map<std::string,FixCreator> *fix_map;
 fix_map保存了fix类全部命令类型。定义在Modify类型中。
 在Modify的构造函数中，按照style_fix.h中的包含来填充。
-类似style_xxx.h的文件，在linux下面，由Make.sh style命令生成。在Windows下面则是预先写好。
+类似style_xxx.h的文件，在linux下面由Make.sh style命令生成，而在Windows下面目前来看是预先写好，可能也是自动生成的。
 因此写一个新类型直接放进去就可以。
+以下宏用于添加命令进入fix列表，范例为fix setforce命令。
+FixStyle(setforce,FixSetForce)
 
 [atom类]
 double **x,**v,**f;
