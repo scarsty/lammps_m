@@ -247,12 +247,12 @@ void FixSetWHNVelocity::post_force(int vflag)
     for (int i = 0; i < nlocal; i++)
       if (mask[i] & groupbit) {
         if (region && !region->match(x[i][0],x[i][1],x[i][2])) continue;
-        voriginal[0] += f[i][0];
-        voriginal[1] += f[i][1];
-        voriginal[2] += f[i][2];
+        voriginal[0] += v[i][0];
+        voriginal[1] += v[i][1];
+        voriginal[2] += v[i][2];
         if (xstyle) v[i][0] += xvalue;
         if (ystyle) v[i][1] += yvalue;
-        if (zstyle) v[i][2] += zvalue;
+        if (zstyle) v[i][2] += zvalue*sqrt(1-(x[i][0]*x[i][0]+x[i][1]*x[i][1])/9.0);
       }
 
   // variable force, wrap with clear/add
