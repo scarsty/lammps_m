@@ -259,7 +259,6 @@ void FixSetWHNVelocity::post_force(int vflag)
 
   } else {
 	  // seems of no use here --sty
-	/*
     modify->clearstep_compute();
 
     if (xstyle == EQUAL) xvalue = input->variable->compute_equal(xvar);
@@ -277,17 +276,16 @@ void FixSetWHNVelocity::post_force(int vflag)
     for (int i = 0; i < nlocal; i++)
       if (mask[i] & groupbit) {
         if (region && !region->match(x[i][0],x[i][1],x[i][2])) continue;
-        foriginal[0] += f[i][0];
-        foriginal[1] += f[i][1];
-        foriginal[2] += f[i][2];
-        if (xstyle == ATOM) f[i][0] = svelocity[i][0];
-        else if (xstyle) f[i][0] = xvalue;
-        if (ystyle == ATOM) f[i][1] = svelocity[i][1];
-        else if (ystyle) f[i][1] = yvalue;
+        voriginal[0] += v[i][0];
+        voriginal[1] += v[i][1];
+        voriginal[2] += v[i][2];
+        if (xstyle == ATOM) v[i][0] = svelocity[i][0];
+        else if (xstyle) v[i][0] = xvalue;
+        if (ystyle == ATOM) v[i][1] = svelocity[i][1];
+        else if (ystyle) v[i][1] = yvalue;
         if (zstyle == ATOM) f[i][2] = svelocity[i][2];
-        else if (zstyle) f[i][2] = zvalue;
+        else if (zstyle) v[i][2] = zvalue;
       }
-	  */
   }
 }
 
