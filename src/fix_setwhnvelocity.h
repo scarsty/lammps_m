@@ -44,7 +44,7 @@ class FixSetWHNVelocity : public Fix {
   char *xstr,*ystr,*zstr;
   char *idregion;
   int xvar,yvar,zvar,xstyle,ystyle,zstyle;
-  double voriginal[3],foriginal_all[3];
+  double voriginal[3],voriginal_all[3];
   int velocity_flag;
   int nlevels_respa;
 
