@@ -337,10 +337,10 @@ double FixSetWHNVelocity::compute_vector(int n)
   // only sum across procs one time
 
   if (velocity_flag == 0) {
-    MPI_Allreduce(voriginal,foriginal_all,3,MPI_DOUBLE,MPI_SUM,world);
+    MPI_Allreduce(voriginal,voriginal_all,3,MPI_DOUBLE,MPI_SUM,world);
     velocity_flag = 1;
   }
-  return foriginal_all[n];
+  return voriginal_all[n];
 }
 
 /* ----------------------------------------------------------------------
