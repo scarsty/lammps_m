@@ -1,2 +1,11 @@
 src/WINDOWS/
 lammps.zip
+bench/
+doc/
+examples/
+lib/
+potentials/
+python/
+tools/
+README
+LICENSE
