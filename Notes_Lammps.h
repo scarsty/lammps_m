@@ -24,6 +24,38 @@ lammps->input->file(); 依据文件中写的命令执行。
   }
 在其中找到run，就可以找到主循环位置。
 
+[一个timestep的过程]
+主要引自开发文档。
+ev_set()
+fix->initial_integrate()
+fix->post_integrate()
+nflag = neighbor->decide()
+if nflag:
+fix->pre_exchange()
+domain->pbc()
+domain->reset_box()
+comm->setup()
+neighbor->setup_bins()
+comm->exchange()
+comm->borders()
+fix->pre_neighbor()
+neighbor->build()
+else
+comm->forward_comm()
+force_clear()
+fix->pre_force()
+pair->compute()
+bond->compute()
+angle->compute()
+dihedral->compute()
+improper->compute()
+kspace->compute()
+comm->reverse_comm()
+fix->post_force()
+fix->final_integrate()
+fix->end_of_step()
+if any output on this step: output->write()
+
 [stub]
 stub库的目的是伪造一个MPI制造串行编译。
 
