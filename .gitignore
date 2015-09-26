@@ -1,5 +1,5 @@
 src/WINDOWS/
-lammps.zip
+*.zip
 bench/
 doc/
 examples/
